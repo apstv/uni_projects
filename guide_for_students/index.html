@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Przewodnik dla studentów IGRR</title>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <meta name="Description" content="Przewodnik dla studentów IGRR Uniwersytetu Wrocławskiego" />
+        <meta name="autor" content="Aleksandra Postawa" />
+	    <meta name="keywords" content="geografia, studia, studenci, uwr, igrr" />
+	    <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+        integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+        crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+        integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+        crossorigin=""></script>
+        <link rel="icon" type="image/x-icon" href="img/1f30d.png">
+    </head>
+
+    <body>
+        <div id="header">
+        <p id="title">Przewodnik dla studentów IGRR</p>
+        <p class="opis">Przed Wami krótki przewodnik dla studentów Instytutu Geografii i Rozwoju Regionalnego.</p>
+        <p class="opis">Zawiera on lokalizacje budynków instytutu oraz kilku innych miejsc - pobliskich sklepów spożywczych, punktów ksero i restauracji.</p>
+        <p class="opis">Mapa pomoże Wam lepiej odnaleźć się we Wrocławiu!</p>
+        </div>
+
+        <div id="map">
+            <div id="przycisk1">
+                <button class="button" id="locationButton" onclick="locate()"><img class="img" src="img/przycisk1.png" height="15" width="15"></button>
+                <p id="demo"></p>
+            </div>
+
+            <div id="przycisk2">
+                <button class="button" id="centerButton" onclick="center()" ><img class="img" src="img/przycisk2.png" height="15" width="15"></button>
+            </div>
+        </div>
+        
+        <script>
+            var icon = L.Icon.extend({
+                options: {
+                    shadowUrl: 'img/shadow1.png',
+                    iconSize:     [23, 40],
+                    shadowSize:   [30, 15],
+                    iconAnchor:   [10, 40],
+                    shadowAnchor: [0, 15],
+                    popupAnchor:  [1, -35]
+                }
+            });
+        
+        var bud_icon = new icon({iconUrl: 'img/marker0.png'});
+        var ksero_icon = new icon({iconUrl: 'img/marker1.png'})
+        var sklep_icon = new icon({iconUrl: 'img/marker2.png'})
+        var gastro_icon = new icon({iconUrl: 'img/marker3.png'})
+        var local_icon = new icon({iconUrl: 'img/marker44.png'})
+
+        var budynki = L.layerGroup();
+
+        var bud_glowny = L.marker([51.11405, 17.03457],{icon: bud_icon}).bindPopup("<p><b>pl. Uniwersytecki 1</b><br>Gmach Główny Uniwersytetu Wrocławskiego, tutaj odbywa się większość zajęć.</p><img alt ='Budynek Główny Uniwersytetu Wrocławskiego' width=300 height=150 src='img/uwr.jpg'/>").addTo(budynki);
+        var kuznicza = L.marker([51.11202, 17.03377],{icon: bud_icon}).bindPopup("<p><b>ul. Kuźnicza 49/55</b><br>Tu mieści się Zakład Zagospodarowania Przestrzennego IGRR.</p><img alt ='Kuźnicza 49/55' width=300 height=150 src='img/kuznicza.jpg'/>").addTo(budynki);
+        var cybulskiego = L.marker([51.11640, 17.02989],{icon: bud_icon}).bindPopup("<p><b>ul. Cybulskiego 32-34</b><br>Tutaj mieści się dziekanat oraz kilka sal ćwiczeniowych.</p><img alt ='Cybulskiego 32-34' width=300 height=150 src='img/cybul.png'/>").addTo(budynki);
+        var kosiby = L.marker([51.10529, 17.08939],{icon: bud_icon}).bindPopup("<p><b>ul. Kosiby 6/8</b><br>Tu znajduje się Zakład Klimatologii i Ochrony Atmosfery.</p><img alt ='Kosiby 6/8' width=300 height=150 src='img/kosiby.jpg'/>").addTo(budynki);
+
+        var punkty_ksero = L.layerGroup();
+
+        var introligator = L.marker([51.12684, 17.03558],{icon: ksero_icon}).bindPopup("<b>Punkt ksero</b><br/>INTROLIGATOR").addTo(punkty_ksero)
+        var minimaxi = L.marker([51.12705, 17.04965],{icon: ksero_icon}).bindPopup("<b>Punkt ksero</b><br/>KSERO MINIMAXIDRUK").addTo(punkty_ksero)
+        var kluczborska = L.marker ([51.12224, 17.04861],{icon: ksero_icon}).bindPopup("<b>Punkt ksero</b><br/>Ksero Kluczborska 26B").addTo(punkty_ksero)
+        var plotlider = L.marker([51.11912, 17.05218],{icon: ksero_icon}).bindPopup("<b>Punkt ksero</b><br/>Plotlider").addTo(punkty_ksero)
+        var printshop = L.marker ([51.11132, 17.03365],{icon: ksero_icon}).bindPopup("<b>Punkt ksero</b><br/>PrintShop").addTo(punkty_ksero)
+        var mojeksero = L.marker([51.11176, 17.03710],{icon: ksero_icon}).bindPopup("<b>Punkt ksero</b><br/>MOJEKSERO").addTo(punkty_ksero)
+        var targowa = L.marker ([51.11265, 17.04071],{icon: ksero_icon}).bindPopup("<b>Punkt ksero</b><br/>Ksero Targowa").addTo(punkty_ksero)
+        var gradex = L.marker ([51.10065, 17.03719],{icon: ksero_icon}).bindPopup("<b>Punkt ksero</b><br/>Gradex").addTo(punkty_ksero)
+        var kserokolor = L.marker ([51.10217, 17.02758],{icon: ksero_icon}).bindPopup("<b>Punkt ksero</b><br/>Kserokolor").addTo(punkty_ksero)
+        var c13 = L.marker([51.10845, 17.05561],{icon: ksero_icon}).bindPopup("<b>Punkt ksero</b><br/>Wydruki C-13").addTo(punkty_ksero)
+        var xserownia = L.marker([51.11065, 17.05500],{icon: ksero_icon}).bindPopup("<b>Punkt ksero</b><br/>Xserownia").addTo(punkty_ksero)
+        var grunwald24 = L.marker([51.10933, 17.06218],{icon: ksero_icon}).bindPopup("<b>Punkt ksero</b><br/>GRUNWALD24").addTo(punkty_ksero)
+
+        var spozywcze = L.layerGroup();
+
+        var zabka_uni = L.marker([51.11326, 17.03280],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>Żabka").addTo(spozywcze)
+        var carr_odrz = L.marker([51.11185, 17.03129],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>Carrefour Express").addTo(spozywcze)
+        var zabka_odrz = L.marker([51.11159, 17.03119],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>Żabka").addTo(spozywcze)
+        var zabka_kiel = L.marker([51.11095, 17.02948],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>Żabka").addTo(spozywcze)
+        var lukar = L.marker([51.10841, 17.02729],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>Delikatesy Lukar").addTo(spozywcze)
+        var zabka_sw = L.marker([51.10691, 17.03219],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>Żabka").addTo(spozywcze)
+        var biedronka1 = L.marker([51.10840, 17.03407],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>Biedronka").addTo(spozywcze)
+        var zabka_ol = L.marker([51.10889, 17.03355],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>Żabka").addTo(spozywcze)
+        var epos1 = L.marker([51.11021, 17.03347],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>EPOS").addTo(spozywcze)
+        var epos2 = L.marker([51.10748, 17.03791],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>EPOS").addTo(spozywcze)
+        var zabka_sz = L.marker([51.11071, 17.03474],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>Żabka").addTo(spozywcze)
+        var delikatesy = L.marker([51.11155, 17.03744],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>Deliaktesy Centrum").addTo(spozywcze)
+        var zabka_nt = L.marker([51.11125, 17.03948],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>Żabka").addTo(spozywcze)
+        var tj = L.marker([51.11246, 17.04029],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>T&J").addTo(spozywcze)
+        var zabka_gd = L.marker([51.10800, 17.04077],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>Żabka").addTo(spozywcze)
+        var biedronka2 = L.marker([51.10397, 17.08118],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>Biedronka").addTo(spozywcze)
+        var zabka_olsz = L.marker([51.10311, 17.09490],{icon: sklep_icon}).bindPopup("<b>Sklep spożywczy</b><br/>Żabka").addTo(spozywcze)
+
+        var gastronomia = L.layerGroup();
+
+        var setka = L.marker([51.10774, 17.03131],{icon:gastro_icon}).bindPopup("<b>Restauracja</b><br/>SETKA Wrocław").addTo(gastronomia);
+        var wokin = L.marker([51.10991, 17.03242],{icon:gastro_icon}).bindPopup("<b>Restauracja</b><br/>Wok in").addTo(gastronomia);
+        var mcdon = L.marker([51.10939, 17.03314],{icon:gastro_icon}).bindPopup("<b>Restauracja</b><br/>McDonald's").addTo(gastronomia);
+        var zahir = L.marker([51.11113, 17.03360],{icon:gastro_icon}).bindPopup("<b>Restauracja</b><br/>Zahir kebab").addTo(gastronomia);
+        var mis = L.marker([51.11254, 17.03413],{icon:gastro_icon}).bindPopup("<b>Bar mleczny</b><br/>Miś").addTo(gastronomia);
+        var najadacze = L.marker([51.11212, 17.03604],{icon:gastro_icon}).bindPopup("<b>Restauracja</b><br/>Najadacze.pl").addTo(gastronomia);
+        var lepione = L.marker([51.11363, 17.03456],{icon:gastro_icon}).bindPopup("<b>Jedzenie na wagę</b><br/>Lepione").addTo(gastronomia);
+        var fccafe = L.marker([51.11321, 17.03482],{icon:gastro_icon}).bindPopup("<b>Kawiarnia</b><br/>FC CAFE").addTo(gastronomia);
+        var szewska = L.marker([51.11351, 17.03600],{icon:gastro_icon}).bindPopup("<b>Restauracja</b><br/>Piec Na Szewskiej").addTo(gastronomia);
+        var mewa = L.marker([51.11650, 17.03314],{icon:gastro_icon}).bindPopup("<b>Bar mleczny</b><br/>Mewa").addTo(gastronomia);
+        var jakumamy = L.marker([51.11824, 17.03500],{icon:gastro_icon}).bindPopup("<b>Restauracja</b><br/>Bar Jak u Mamy").addTo(gastronomia);
+
+        var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
+	    var mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+ 
+	    var ulice = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+
+        var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        });
+
+        var map = L.map('map', {
+            center: [51.11468186403018, 17.040530437809235],
+            zoom: 14,
+            minZoom: 10,
+            maxZoom: 20,
+
+            layers: [osm, budynki]
+        });
+
+        var baseLayers = {
+            'OpenStreetMap': osm,
+            'Ulice': ulice
+        }
+
+        var overlays = {
+            'Budynki IGRR': budynki,
+            'Punkty ksero': punkty_ksero,
+            'Gastronomia': gastronomia,
+            'Sklepy spożywcze': spozywcze
+        }
+
+        var layerControl = L.control.layers(baseLayers, overlays).addTo(map);
+        var satellite = L.tileLayer(mbUrl, {id: 'mapbox/satellite-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
+        layerControl.addBaseLayer(satellite, "Satelita");
+
+        var enable = true;
+
+        function onLocationFound(e) {
+            enable = false;
+            var radius = e.accuracy/2;
+
+            var locationMarker = L.marker(e.latlng,{icon: local_icon}).addTo(map).bindPopup('Jesteś w promieniu ' + Math.round(radius) + ' m od tego punktu').openPopup();
+            var locationCircle = L.circle(e.latlng, radius).addTo(map);
+        }
+
+        function onLocationError(e) {
+            alert(e.message);
+        }
+
+        map.on('locationfound', onLocationFound);
+        map.on('locationerror', onLocationError);
+
+        map.locate({setView: true, maxZoom: 16});
+
+        function onMapClick(e) {
+            if (enable == false) {
+                enable = true;
+            } else {
+            alert("Współrzędne wybranego punktu: " + e.latlng);
+        }}
+        
+        map.on('click', onMapClick);
+        var popup = L.popup();
+        
+        function onMapClick(e) {
+            if (enable == false) {
+                enable = true;
+            }           
+            else {
+            popup
+                .setLatLng(e.latlng)
+                .setContent("Współrzędne wybranego punktu: " + e.latlng.toString())
+                .openOn(map);
+        }}
+        
+        map.on('click', onMapClick);
+
+        function clickZoom(e) {
+            map.setView(e.target.getLatLng(),16);
+        }
+
+        function locate() {
+            enable = false;
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    latit = position.coords.latitude;
+                    longit = position.coords.longitude;
+                    var abc = L.marker([latit,longit],{icon:local_icon}).addTo(map).bindPopup('Tu jesteś').openPopup().on('click',clickZoom);
+              })}
+        }
+
+        function center() {
+            enable = false;
+            map.setView(new L.LatLng(51.11468186403018, 17.040530437809235), 14);
+        }
+
+        </script>
+
+        <div id="footer">
+            <p id="title2">Przydatne linki</p>
+            <div class="col1">
+            <p><a href="https://uni.wroc.pl/" target="_blank">Uniwersytet Wrocławski</a></p>
+            <p><a href="https://www.wnoz.uni.wroc.pl/" target="_blank">Wydział Nauk o Ziemi i Kształtowania Środowiska</a></p>
+		    <p><a href="https://geogr.uni.wroc.pl/" target="_blank">Instytut Geografii i Rozwoju Regionalnego</a></p>
+		    <p><a href="https://www.wnoz.uni.wroc.pl/dziekanat" target="_blank">Dziekanat</a></p>
+            </div>
+
+            <div class="col2">
+            <p><a href="https://usosweb.uni.wroc.pl/kontroler.php?_action=news/default" target="_blank">USOS</a></p>
+            <p><a href="https://www.office.com/" target="_blank">Poczta uniwersytecka</a></p>
+            <p><a href="https://spnjo.uni.wroc.pl/pl/" target="_blank">SPNJO</a></p>
+            <p><a href="https://zapisy.uni.wroc.pl/" target="_blank">Zapisy na wf</a></p>
+            </div>
+		    <br>
+        </div>
+
+    </body>
+</html>
